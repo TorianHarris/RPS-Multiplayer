@@ -13,7 +13,7 @@ firebase.initializeApp(config);
 let database = firebase.database();
 
 var connectionsRef = database.ref("/connections");
-var usersref = database.ref("/users");
+var roomRef = database.ref("/rooms");
 
 // '.info/connected' is a special location provided by Firebase that is updated every time
 // the client's connection state changes.
@@ -26,7 +26,6 @@ connectedRef.on("value", function (snap) {
 
     // If they are connected..
     if (snap.val()) {
-        $("#status").html("Connected").addClass("text-success").removeClass("text-danger");
         // Add user to the connections list.
         var con = connectionsRef.push(true);
 
@@ -36,9 +35,17 @@ connectedRef.on("value", function (snap) {
 });
 
 // When first loaded or when the connections list changes...
-connectionsRef.on("value", function(snapshot) {
+connectionsRef.on("value", function (snapshot) {
 
     // Display the viewer count in the html.
     // The number of online users is the number of children in the connections list.
     $("#watchers").text(snapshot.numChildren());
-  });
+    if (snapshot.numChildren() < 3)
+        $("#status").html("Connected").addClass("text-success").removeClass("text-danger");
+});
+
+let name = prompt("Enter Name")
+
+$("#new-room").on("click", function () {
+    let room = roomRef.push(name);
+});
