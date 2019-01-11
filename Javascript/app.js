@@ -1,6 +1,6 @@
 // Initialize Firebase
 let config = {
-    apiKey: "AIzaSyCg5_dTcBwqFe48vGQBt6CPIggXYvltWXc",
+    apiKey: apiKey,
     authDomain: "rps-online-52e02.firebaseapp.com",
     databaseURL: "https://rps-online-52e02.firebaseio.com",
     projectId: "rps-online-52e02",
@@ -19,7 +19,7 @@ let roomRef = database.ref("/rooms");
 // '.info/connected' is a special location provided by Firebase that is updated every time
 // the client's connection state changes.
 // '.info/connected' is a boolean value, true if the client is connected and false if they are not.
-// let connectedRef = database.ref(".info/connected");
+ let connectedRef = database.ref(".info/connected");
 
 // When the client's connection state changes...
 //console.log(connectionsRef.numChildren());
@@ -37,7 +37,11 @@ let roomRef = database.ref("/rooms");
 
 roomRef.on("child_added", function (snapshot) {
     $("#join-room").append($("<button>").text(snapshot.key).attr("room-id", snapshot.key));
-})
+});
+
+roomRef.on("child_removed", function (snapshot) {
+    $(`[room-id="${snapshot.key}"]`).remove();
+});
 
 // When first loaded or when the connections list changes...
 // connectionsRef.on("value", function (snapshot) {
@@ -52,17 +56,26 @@ $("#new-room").on("click", function () {
     if(!createdRoom)
     {
         createdRoom = true;
+        $("#status").html("Created room");
         let room = roomRef.push();
         room.push({
             userName: name
         });
-        room.onDisconnect().remove();
-    }
+        room.onDisconnect().remove(function (err) {
+            if(err) {
+                console.log("error")
+            }
+            else {
+                console.log("do stuff");
+            }
+        });
+    };
 });
 
 $("#join-room").on("click", "button", function () {
     let roomID = $(this).attr("room-id");
     let room = roomRef.child(roomID);
+    $("#status").html("Joined room " + roomID);
     room.once("value", function (snapshot) {
         if (snapshot.numChildren() < 2)
         {
@@ -74,4 +87,4 @@ $("#join-room").on("click", "button", function () {
         else
             alert("this room is full");
     });
-})
+});
