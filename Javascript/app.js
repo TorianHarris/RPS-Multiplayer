@@ -14,12 +14,12 @@ let database = firebase.database();
 let createdRoom = false;
 let name = prompt("Enter Name");
 let roomRef = database.ref("/rooms");
-//var connectionsRef = database.ref("/connections");
+// var connectionsRef = database.ref("/connections");
 
 // '.info/connected' is a special location provided by Firebase that is updated every time
 // the client's connection state changes.
 // '.info/connected' is a boolean value, true if the client is connected and false if they are not.
- let connectedRef = database.ref(".info/connected");
+//  let connectedRef = database.ref(".info/connected");
 
 // When the client's connection state changes...
 //console.log(connectionsRef.numChildren());
@@ -35,8 +35,10 @@ let roomRef = database.ref("/rooms");
 //     }
 // });
 
+$("#user-name").html("Welcome, " + name + "!");
+
 roomRef.on("child_added", function (snapshot) {
-    $("#join-room").append($("<button>").text(snapshot.key).attr("room-id", snapshot.key));
+    $("#join-room").append($("<button>").text(snapshot.val().LimitToFirst().username + "'s Room").attr("room-id", snapshot.key));
 });
 
 roomRef.on("child_removed", function (snapshot) {
