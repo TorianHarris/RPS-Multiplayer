@@ -15,7 +15,7 @@ let createdRoom = false;
 let name = prompt("Enter Name");
 let roomRef = database.ref("/rooms");
 //var connectionsRef = database.ref("/connections");
-
+//new thing
 // '.info/connected' is a special location provided by Firebase that is updated every time
 // the client's connection state changes.
 // '.info/connected' is a boolean value, true if the client is connected and false if they are not.
